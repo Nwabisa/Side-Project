@@ -5,13 +5,12 @@
  bodyParser = require('body-parser'),
   //myConnection = require('express-myconnection');
   session = require('express-session');
- // var loggin = require('../routes/linkie');
-// Configure Express
+
 
    // create a route
     var app = express();
     app.use(cookieParser());
-    app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
+    app.use(session({ secret: 'keyboard cat', resave : true, cookie: { maxAge: 60000 }}))
    //app.use(myConnection(mysql, dbOptions, 'single'));
    app.engine('handlebars', exphbs({defaultLayout: 'main'}));
    app.set('view engine', 'handlebars');
@@ -24,7 +23,8 @@
   res.render('linkie', userData)
 });*/
 
-var user = {username:"Linkie", password:"546543"};
+
+var user = {"Linkie":"546543"};
 var checkUser = function(req, res, next){
   if (req.session.user){
     return next();
@@ -34,19 +34,21 @@ var checkUser = function(req, res, next){
     res.redirect('/');
   }
 };
+  
 
  app.get('/', function(req, res){
   res.render('login')
 });
 app.post('/home', function(req, res){
   var formData = JSON.parse(JSON.stringify(req.body));
-
-  if(user.username == formData.username){
-    req.session.user = user.username;
+  if(user[formData.username] !== undefined){
+    req.session.user = formData.username;
     return res.redirect('home')
   }
   res.redirect('/')
 });
+
+
 
 
 app.get('/home', checkUser, function (req, res) {
@@ -58,6 +60,17 @@ app.get('/home', checkUser, function (req, res) {
 
   app.get('/signup', function(req, res){
   res.render('signup')
+});
+ app.post('/signup', function(req, res){
+  var formData = JSON.parse(JSON.stringify(req.body));
+
+  if(formData.password == formData.confirm_password){
+    if(user[formData.username] === undefined)
+    user[formData.username] = formData.password;
+    console.log(user)
+    return res.redirect('/')
+  }
+  res.redirect('signup')
 });
 // app.get('/', function(req, res){
 //   req.logout();
