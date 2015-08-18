@@ -177,7 +177,7 @@ input[type=submit] {
   <section class="container">
     <div class="login">
       <h1>Login</h1>
-      <form method="post" action="/home">
+      <form method="post" action="/home" name="form">
         <p><input type="text" name="username" value="" placeholder="Username or Email" required></p>
         <p><input type="password" name="password" value="" placeholder="Password" required></p>
         <p class="remember_me">
@@ -186,7 +186,7 @@ input[type=submit] {
             Remember me!
           </label>
         </p>
-        <p class="submit"><input type="submit" name="commit" value="Login"></p>
+    <p class="submit"><input type="submit" name="commit" value="Login" href="login:confirm_submit()"></p>
    <a href="signup"><strong>Dont Have Account??</strong>Sign Up  </a>      
 </form>
     </div>    

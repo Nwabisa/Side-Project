@@ -3,15 +3,24 @@
  var mysql = require('mysql'),
  cookieParser = require('cookie-parser'),
  bodyParser = require('body-parser'),
-  //myConnection = require('express-myconnection');
+  myConnection = require('express-myconnection');
   session = require('express-session');
+  var userlog = require('../routes/login');
+
+  dbOptions ={
+   host: 'localhost',
+   user: 'root',
+   password: 'nwabisamilisantmasiko',
+   port: 3306,
+   database: 'SpazaApp'
+ };
 
 
    // create a route
     var app = express();
     app.use(cookieParser());
     app.use(session({ secret: 'keyboard cat', resave : true, cookie: { maxAge: 60000 }}))
-   //app.use(myConnection(mysql, dbOptions, 'single'));
+   app.use(myConnection(mysql, dbOptions, 'single'));
    app.engine('handlebars', exphbs({defaultLayout: 'main'}));
    app.set('view engine', 'handlebars');
    app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,34 +33,28 @@
 });*/
 
 
-var user = {"Linkie":"546543"};
-var checkUser = function(req, res, next){
-  if (req.session.user){
-    return next();
-    //res.render("/home")
-  }
-  else{// the user is not logged in redirect him to the login page
-    res.redirect('/');
-  }
-};
+//var user = {"Linkie":"546543", "sibusiso":"coder123"};
+// var checkUser = function(req, res, next){
+//   if (req.session.user){
+//     return next();
+//     //res.render("/home")
+//   }
+//   else{// the user is not logged in redirect him to the login page
+//     res.redirect('/');
+//   }
+// };
   
+   app.get('/', userlog.checkUser, function(req, res){
+   res.render('login')
+ });
 
- app.get('/', function(req, res){
-  res.render('login')
-});
 app.post('/home', function(req, res){
-  var formData = JSON.parse(JSON.stringify(req.body));
-  if(user[formData.username] !== undefined){
-    req.session.user = formData.username;
-    return res.redirect('home')
-  }
-  res.redirect('/')
+  res.render('home')
 });
 
 
 
-
-app.get('/home', checkUser, function (req, res) {
+app.get('/home', function (req, res) {
   res.render('home')
 });
  app.get('/logout', function(req, res){
@@ -62,15 +65,8 @@ app.get('/home', checkUser, function (req, res) {
   res.render('signup')
 });
  app.post('/signup', function(req, res){
-  var formData = JSON.parse(JSON.stringify(req.body));
+    res.redirect('signup')
 
-  if(formData.password == formData.confirm_password){
-    if(user[formData.username] === undefined)
-    user[formData.username] = formData.password;
-    console.log(user)
-    return res.redirect('/')
-  }
-  res.redirect('signup')
 });
 // app.get('/', function(req, res){
 //   req.logout();
